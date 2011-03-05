@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/add.png</file>
+        <file>res/cloud.ico</file>
+        <file>res/cloud.png</file>
+        <file>res/eject.png</file>
+        <file>res/play.png</file>
+        <file>res/shutdown.png</file>
+        <file>res/slow.png</file>
+        <file>res/steam.ico</file>
+        <file>res/stop.png</file>
+        <file>res/utorrent.png</file>
+    </qresource>
+</RCC>

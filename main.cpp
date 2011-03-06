@@ -1,5 +1,5 @@
 #include <QtGui/QApplication>
-#include "mainwindow.h"
+#include "cloud.h"
 #include <QFile>
 #include "bootloader.h"
 #include <QEventLoop>
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
   b.process();
   b.exec();
 
-  MainWindow w(settings);
+  Cloud w(settings);
   w.show();
 
   return a.exec();

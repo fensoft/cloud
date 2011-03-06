@@ -12,6 +12,7 @@ public:
   int state();
   void setZip(QStringList s);
   void setDest(QString s);
+  void setSizeBuf(unsigned int size_buf);
 signals:
   void end();
   void newState(unsigned long long int);
@@ -19,6 +20,7 @@ signals:
 private:
   QStringList zip;
   QString dest;
+  unsigned int size_buf;
 };
 
 #endif // MYUNZIP_H

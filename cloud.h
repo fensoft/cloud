@@ -10,9 +10,13 @@
 #include "QTreeWidgetItem"
 #include <QTimer>
 #include "myunzip.h"
+#include <QItemDelegate>
+#include <QPainter>
+
+#define TRACE(_lev_, _what_) do { if (_lev_ <= 5) qDebug() << QString("%1:%2 %3()").arg(__FILE__).arg(__LINE__).arg(__FUNCTION__) << _what_; } while (0)
 
 namespace Ui {
-    class MainWindow;
+    class Cloud;
 }
 
 typedef struct
@@ -23,13 +27,13 @@ typedef struct
   int pos;
 } dl;
 
-typedef struct
+/*typedef struct
 {
   unsigned long current;
   unsigned long max;
   int state;
   int pos;
-} sdl;
+} sdl;*/
 
 typedef struct
 {
@@ -40,16 +44,16 @@ typedef struct
   QStringList files;
 } game;
 
-class MainWindow : public QMainWindow
+class Cloud : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QSettings* set, QWidget *parent = 0);
-    ~MainWindow();
+    explicit Cloud(QSettings* set, QWidget *parent = 0);
+    ~Cloud();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::Cloud *ui;
     void updateContent();
     int currentItem;
     QSettings* setGlobal;
@@ -74,9 +78,8 @@ private:
     int current_total;
     int current_num;
     QProcess p;
-    void do_item(int h);
     void add_shortcuts(int item);
-    void dl_progress(int h, sdl* total);
+    void dl_progress(int h, dl* total);
     //QTimer ugfd;
     int changed;
     QTimer httptimer;
@@ -113,5 +116,60 @@ private slots:
     void show_utorrent();
     void appExit();
 };
+
+class ItemDelegate: public QItemDelegate
+{
+public:
+  ItemDelegate(QObject* parent = 0): QItemDelegate(parent)
+  {
+  }
+
+  void paint(QPainter* painter,
+             const QStyleOptionViewItem& option,
+             const QModelIndex& index) const
+  {
+    QItemDelegate::paint(painter, option, index);
+    if (index.data(Qt::DisplayRole).toString().contains("/"))
+    {
+      QRegExp re("([^ ]) ([^/]*)/(.*)");
+      re.indexIn(index.data(Qt::DisplayRole).toString());
+      float b  = re.cap(2).toFloat();
+      float e  = re.cap(3).toFloat();
+      painter->drawRect(option.rect.x(),
+                        option.rect.y(),
+                        option.rect.width()-1,
+                        option.rect.height()/5);
+      painter->fillRect(option.rect.x()+1,
+                        option.rect.y()+1,
+                        (option.rect.width()-2)*((float)b/(float)e),
+                        (option.rect.height()/5)-1, Qt::green);
+    }
+  }
+};
+
+#define SET_ITEM(__item__, __string__, __state__, __pos__, __color__) \
+if (1) \
+{ \
+  if (__item__) \
+  { \
+    __item__->setText(0, __string__);\
+    if (__state__ != __item__->text(1)) \
+    { \
+      /*ui->list->resizeColumnToContents(0);*/ \
+      /*ui->list->resizeColumnToContents(1);*/ \
+      /*ui->list->sortItems(1, Qt::AscendingOrder);*/ \
+      changed = setGlobal->value("Global/NonSleepRefreshTime").toInt(); \
+      local_changed = 1; \
+    } \
+    __item__->setText(1, __state__); \
+    __item__->setText(2, QVariant(__pos__).toString()); \
+    __item__->setForeground(0, QBrush(__color__)); \
+    __item__->setForeground(1, QBrush(__color__)); \
+  } \
+  else \
+    qDebug() << "not found"; \
+} \
+else
+
 
 #endif // MAINWINDOW_H

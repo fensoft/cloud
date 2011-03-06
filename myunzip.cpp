@@ -1,8 +1,6 @@
 #include "myunzip.h"
 #include "unzip.h"
 #include <iowin32.h>
-#define WRITEBUFFERSIZE (8192)
-#define WRITEBUFFERSIZE 3
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,7 +16,8 @@ int do_extract_currentfile(unzFile uf,
                            const int* popt_extract_without_path,
                            int* popt_overwrite,
                            const char* password,
-                           char* folder)
+                           char* folder,
+                           uInt size_buf)
 {
     char filename_inzip2[256];
     char* filename_withoutpath;
@@ -26,10 +25,8 @@ int do_extract_currentfile(unzFile uf,
     int err=UNZ_OK;
     FILE *fout=NULL;
     void* buf;
-    uInt size_buf;
 
     unz_file_info64 file_info;
-    //uLong ratio=0;
     err = unzGetCurrentFileInfo64(uf,&file_info,filename_inzip2,sizeof(filename_inzip2),NULL,0,NULL,0);
     char* filename_inzip = (char*)malloc(4096);
     filename_inzip[0] = 0;
@@ -42,7 +39,6 @@ int do_extract_currentfile(unzFile uf,
         return err;
     }
 
-    size_buf = WRITEBUFFERSIZE;
     buf = (void*)malloc(size_buf);
     if (buf==NULL)
     {
@@ -62,7 +58,6 @@ int do_extract_currentfile(unzFile uf,
     {
         if ((*popt_extract_without_path)==0)
         {
-            //printf("creating directory: %s\n",filename_inzip);
             _mkdir(filename_inzip);
         }
     }
@@ -84,36 +79,13 @@ int do_extract_currentfile(unzFile uf,
 
         if (((*popt_overwrite)==0) && (err==UNZ_OK))
         {
-            char rep=0;
             FILE* ftestexist;
             ftestexist = fopen64(write_filename,"rb");
             if (ftestexist!=NULL)
             {
                 fclose(ftestexist);
-                do
-                {
-                    char *answer;
-                    int ret;
-
-                    printf("The file %s exists. Overwrite ? [y]es, [n]o, [A]ll: ",write_filename);
-                    //ret = scanf("%1s",answer);
-                    ret = 1; answer="A";
-                    if (ret != 1)
-                    {
-                       exit(EXIT_FAILURE);
-                    }
-                    rep = answer[0] ;
-                    if ((rep>='a') && (rep<='z'))
-                        rep -= 0x20;
-                }
-                while ((rep!='Y') && (rep!='N') && (rep!='A'));
             }
-
-            if (rep == 'N')
-                skip = 1;
-
-            if (rep == 'A')
-                *popt_overwrite=1;
+            *popt_overwrite=1;
         }
 
         if ((skip==0) && (err==UNZ_OK))
@@ -139,8 +111,6 @@ int do_extract_currentfile(unzFile uf,
 
         if (fout!=NULL)
         {
-            //printf(" extracting: %s\n",write_filename);
-
             do
             {
                 err = unzReadCurrentFile(uf,buf,size_buf);
@@ -160,10 +130,6 @@ int do_extract_currentfile(unzFile uf,
             while (err>0);
             if (fout)
                     fclose(fout);
-
-            /*if (err==0)
-                change_file_date(write_filename,file_info.dosDate,
-                                 file_info.tmu_date);*/
         }
 
         if (err==UNZ_OK)
@@ -186,17 +152,13 @@ void MyUnzip::run()
 {
   unsigned long long int global_max = 0;
   unsigned long long int global_current = 0;
-  //QDir::setCurrent("games") ;
+
   qDebug() << "void MyUnzip::run() - 1" << zip;
-  //QString test = QCoreApplication::applicationDirPath() + "/"+zip;
-  //qDebug() << QCoreApplication::applicationDirPath();
-  //const char* zipfilename = test.toStdString().c_str();
+
   unzFile uf[128];
   unz_global_info64 gi[128];
-  int ret_value=0;
 
   zlib_filefunc64_def ffunc[128];
-  //int i = 0;
   for (int index = 0; index < zip.size(); index++)
   {
     fill_win32_filefunc64A(&ffunc[index]);
@@ -208,8 +170,6 @@ void MyUnzip::run()
       qDebug() << "Cannot open " << zipfilename;
       return;
     }
-
-    FILE* fout=NULL;
 
     gi[index].number_entry = 0;
     int err = unzGetGlobalInfo64(uf[index],&gi[index]);
@@ -227,10 +187,7 @@ void MyUnzip::run()
     qDebug() << "void MyUnzip::run() - 2";
     for (uLong i=0;i<gi[index].number_entry;i++)
     {
-      //printf("%i out of %i\n", i, gi.number_entry);
       qDebug() << i << "/" << gi[index].number_entry;
-      //*global_current = i;
-      //*global_max = gi.number_entry;
       int opt_extract_without_path = 0;
       int opt_overwrite = 1;
       char* password = 0;
@@ -239,7 +196,8 @@ void MyUnzip::run()
       if (do_extract_currentfile(uf[index],&opt_extract_without_path,
                                  &opt_overwrite,
                                  password,
-                                 dest.toAscii().data()) != UNZ_OK)
+                                 dest.toAscii().data(),
+                                 size_buf) != UNZ_OK)
         break;
 
       if ((i+1)<gi[index].number_entry)
@@ -255,7 +213,6 @@ void MyUnzip::run()
     qDebug() << "void MyUnzip::run() - 3";
     unzClose(uf[index]);
   }
-  //QDir::setCurrent("..");
   emit(end());
   return;
 }
@@ -273,4 +230,9 @@ void MyUnzip::setDest(QString s)
 int MyUnzip::state()
 {
   return 0;
+}
+
+void MyUnzip::setSizeBuf(unsigned int s)
+{
+  size_buf = s;
 }

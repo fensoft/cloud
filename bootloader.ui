@@ -23,7 +23,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Chargement des parametres / Scan du reseau...</string>
+        <string>Loading parameters from networks computers</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -46,7 +46,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Machines:</string>
+        <string>PC:</string>
        </property>
       </widget>
      </item>
@@ -60,7 +60,7 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Torrents:</string>
+        <string>Files:</string>
        </property>
       </widget>
      </item>
@@ -78,7 +78,7 @@
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>En cours:</string>
+        <string>In progress:</string>
        </property>
       </widget>
      </item>

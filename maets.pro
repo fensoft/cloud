@@ -2,19 +2,23 @@ QT       += core gui xml network
 TARGET   = ../Cloud
 TEMPLATE = app
 SOURCES += main.cpp\
-           mainwindow.cpp \
            minizip/zip.c \
            minizip/unzip.c \
-           #minizip/miniunz.c \
            minizip/iowin32.c \
            minizip/ioapi.c \
            myunzip.cpp \
-           bootloader.cpp
-HEADERS  += mainwindow.h \
+           bootloader.cpp \
+    cloud-download.cpp \
+    cloud-tools.cpp \
+    cloud-install.cpp \
+    cloud-run.cpp \
+    cloud.cpp
+
+HEADERS  += cloud.h \
             myunzip.h \
             bootloader.h
 
-FORMS    += mainwindow.ui \
+FORMS    += cloud.ui \
             bootloader.ui
 
 OTHER_FILES += config.ini maets.rc

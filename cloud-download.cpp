@@ -126,9 +126,18 @@ void Cloud::ut_get_file()
   TRACE(10, "");
   if (games.size() == 0)
     return;
-  httpBuf.open(QIODevice::ReadWrite | QIODevice::Truncate);
+  {
+    foreach (QString hash, hashes)
+    {
+      httpBuf.open(QIODevice::ReadWrite | QIODevice::Truncate);
+      http->get(QString("/gui/?action=getfiles&hash=%1").arg(hash), &httpBuf);
+      QEventLoop loop;
+      connect(http, SIGNAL(done(bool)), &loop, SLOT(quit()));
+      loop.exec();
+      ut_get_file_done();
+    }
+  }
   httpBufStatus.open(QIODevice::ReadWrite | QIODevice::Truncate);
-  http->get(QString("/gui/?action=getfiles&hash=%1").arg(games.at(current_torrent).hash), &httpBuf);
   httpStatus->get(QString("/gui/?list=1"), &httpBufStatus);
   current_torrent = (current_torrent + 1) % hashes.size();
   TRACE(10, "");
@@ -168,6 +177,7 @@ void Cloud::ut_status_done()
       long long r = QVariant(sl[8]).toLongLong() / 104857L;
       long long e = QVariant(sl[9]).toLongLong() / 104857L;
       int t = QVariant(sl[10]).toInt() / 60;
+      //fixme : add some widgets
       statusBar()->showMessage(tr("Up %1,%2 Mb/s\tDl %3,%4 Mb/s\tTime : %5 min").arg(r/10).arg(r%10).arg(e/10).arg(e%10).arg(t));
     }
   }
@@ -182,36 +192,45 @@ void Cloud::ut_get_file_done()
   int i = 0;
   while (!httpBuf.atEnd())
   {
-    char buf[1024];
-    httpBuf.readLine(buf, 1024);
+    TRACE(10, "");
+    char buf[1025];
+    qDebug() << httpBuf.readLine(buf, 1024);
     QString bufS(buf);
-    bufS.replace(QRegExp("^,*"), "");
-    QStringList sl = bufS.split(',');
-    if (sl.size() == 4)
+    TRACE(10, bufS);
+    if (bufS.size() && (bufS[0] == '[' || bufS[1] == '['))
     {
-      //TRACE(5, "");
-      sl[0].replace("[\"", "").replace("[", "").replace("\"", "");
-      sl[3].replace("]", "");
-      dl c;
-      c.current = c.max = 0L;
-      c.current = QVariant(sl[2]).toLongLong();
-      c.max = QVariant(sl[1]).toLongLong();
-      c.state = QString(sl[3]).toInt();
-      c.pos = i;
-      i++;
-      if (i > 70)
+      bufS.replace(QRegExp("^,*"), "");
+      TRACE(10, "");
+      QStringList sl = bufS.split(',');
+      TRACE(10, "");
+      if (sl.size() == 4)
       {
-        qDebug() << "error";
+        //TRACE(5, "");
+        TRACE(10, "");
+        sl[0].replace("[\"", "").replace("[", "").replace("\"", "");
+        sl[3].replace("]", "");
+        dl c;
+        c.current = c.max = 0L;
+        c.current = QVariant(sl[2]).toLongLong();
+        c.max = QVariant(sl[1]).toLongLong();
+        c.state = QString(sl[3]).toInt();
+        c.pos = i;
+        i++;
+        if (i > 70)
+        {
+          qDebug() << "error";
+        }
+        dllist.insert(sl[0], c);
       }
-      dllist.insert(sl[0], c);
     }
   }
+  TRACE(10, "");
   if (dllist.size() > 5 && first_time == 1)
   {
     first_time = 0;
     dl_reset();
   }
-
+  TRACE(10, dllist.keys());
   for (int h = 0; h < games.size(); h++)
   {
     int item = h;
@@ -226,7 +245,7 @@ void Cloud::ut_get_file_done()
 
     QString fol = games.at(item).folder.isEmpty() ? games.at(item).name : games.at(item).folder;
     QString desc = QString("%1/%2/" + setGlobal->value("Global/DescFile").toString()).arg(setGlobal->value("Global/Folder").toString(), fol);
-
+    TRACE(10, "");
     int downloadfinished = total.state && total.current == total.max;
     int mustinstall = total.state >= 2 && total.current == total.max;
     int lowprio = total.state == 1;
@@ -234,7 +253,7 @@ void Cloud::ut_get_file_done()
     int extractfinished = (current_v == -1);
     int shortcutcreated = installed.contains(item) == true;
     int installinprogress = (current_v == item);
-
+    TRACE(10, "");
     if (setGlobal->value("Global/uTorrent").toInt() == 1)
     {
       if (total.state == 0)
@@ -280,7 +299,7 @@ void Cloud::ut_get_file_done()
             SET_ITEM(items[item], QString("%1").arg(games.at(item).name), tr("Install"), 30, Qt::cyan);
             current_v = h;
             current_i = 0;
-            refresh_log();
+            //refresh_log();
             continue;
           }
           else
@@ -317,7 +336,7 @@ void Cloud::ut_get_file_done()
     ui->list->resizeColumnToContents(0);
     ui->list->resizeColumnToContents(1);
   }
-  dl_get();
+  //dl_get();
   TRACE(10, "");
 }
 

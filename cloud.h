@@ -13,7 +13,7 @@
 #include <QItemDelegate>
 #include <QPainter>
 
-#define TRACE(_lev_, _what_) do { if (_lev_ <= 5) qDebug() << QString("%1:%2 %3()").arg(__FILE__).arg(__LINE__).arg(__FUNCTION__) << _what_; } while (0)
+#define TRACE(_lev_, _what_) do { if (_lev_ <= 10) qDebug() << QString("%1:%2 %3()").arg(__FILE__).arg(__LINE__).arg(__FUNCTION__) << _what_; } while (0)
 
 namespace Ui {
     class Cloud;
@@ -41,6 +41,7 @@ typedef struct
   QString folder;
   QString icon;
   QString hash;
+  QString location;
   QStringList files;
 } game;
 
@@ -89,6 +90,7 @@ private:
     void readIni(QString ini);
     QList<game> games;
     int current_torrent;
+    QTimer* timerDl;
 
 private slots:
     void on_list_itemDoubleClicked(QTreeWidgetItem* item, int column);

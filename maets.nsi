@@ -1,9 +1,9 @@
 !define SIZE "5000"
-!define APPNAME "Steam-LAN"
+!define APPNAME "Cloud"
 
 Name "${APPNAME}"
-OutFile "steamlan-install.exe"
-InstallDir c:\SteamLAN
+OutFile "cloud-install.exe"
+InstallDir c:\Cloud
 RequestExecutionLevel admin
 
 !include WinMessages.nsh
@@ -124,24 +124,26 @@ Section "" ;No components page, name is not important
 
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
-  File Steam-LAN.exe
-  File *.dll
+  File Cloud.exe
+  File P:\Dev\QtSDK\mingw\bin\libgcc_s_dw2-1.dll
+  File P:\Dev\QtSDK\mingw\bin\mingwm10.dll
+  File P:\Dev\QtSDK\Desktop\Qt\4.7.2\mingw\lib\QtCore4.dll
+  File P:\Dev\QtSDK\Desktop\Qt\4.7.2\mingw\lib\QtGui4.dll
+  File P:\Dev\QtSDK\Desktop\Qt\4.7.2\mingw\lib\QtNetwork4.dll
+  File zlib1.dll
   File config.ini
-  File games.torrent
-  File TINY.EXE
-  File index.html
-  File httpd-*.cmd
+  SetOutPath $INSTDIR\tools
+  File tools\*
+  SetOutPath $INSTDIR\www
+  File www\index.html
   SetOutPath $INSTDIR\utorrent
   File utorrent\utorrent.exe
   File utorrent\settings.dat.orig
   File utorrent\resume.dat.orig
   File utorrent\utorrent.lng
   File utorrent\webui.zip
-  SetOutPath $INSTDIR\games
-  SetOutPath $INSTDIR\icons
-  File icons\*.png
   SetOutPath $INSTDIR
-  CreateShortCut "$DESKTOP\Steam-LAN.lnk" "$INSTDIR\Steam-LAN.exe"
+  CreateShortCut "$DESKTOP\Cloud.lnk" "$INSTDIR\Cloud.exe"
   SetRegView 64
   WriteRegStr HKCU "Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" "$INSTDIR\Steam-LAN.exe" "RUNASADMIN"
   Delete $INSTDIR\utorrent_configured

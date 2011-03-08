@@ -17,10 +17,11 @@ class BootLoader : public QDialog
 public:
     explicit BootLoader(QSettings* set, QWidget *parent = 0);
     ~BootLoader();
-    QBuffer* httpBuf[256];
+    QMap<QString, QBuffer*> httpBuf;
     int nbfil;
     int nbmac;
     QSettings* settings;
+    QStringList ips;
 private:
     Ui::BootLoader *ui;
 signals:

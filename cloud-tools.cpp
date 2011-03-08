@@ -50,6 +50,7 @@ void Cloud::readIni(QString ini)
       g.name = set->value(item + "/name").toString();
       g.folder = set->value(item + "/folder").toString();
       ret = g.hash = set->value("global/hash").toString();
+      g.location = set->value("global/folder").toString();
       g.icon = set->value(item + "/icon").toString();
       int i = 1;
       while (!set->value(item + QString("/file%1").arg(i)).toString().isEmpty())

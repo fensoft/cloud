@@ -84,11 +84,14 @@ void Cloud::refresh_log()
       return;
     if (games.at(item).files.size())
     {
-      unzip2.setZip(games.at(item).files);
+      if (games.at(item).files.size() == 0 || QFile::exists(games.at(item).files[0]))
+        unzip2.setZip("", games.at(item).files);
+      else
+        unzip2.setZip(games.at(item).location, games.at(item).files);
       unzip2.setDest(setGlobal->value("Global/Folder").toString());
       unzip2.setSizeBuf(setGlobal->value("Global/UnzipBufSize").toInt());
       unzip2.start(QThread::HighPriority);
-      ut_get_file_done();
+      //ut_get_file_done();
     }
     else
       refreshUnzipProgressEnd();

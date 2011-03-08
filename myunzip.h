@@ -10,7 +10,7 @@ class MyUnzip : public QThread
 public:
   void run();
   int state();
-  void setZip(QStringList s);
+  void setZip(QString l, QStringList s);
   void setDest(QString s);
   void setSizeBuf(unsigned int size_buf);
 signals:
@@ -20,6 +20,7 @@ signals:
 private:
   QStringList zip;
   QString dest;
+  QString location;
   unsigned int size_buf;
 };
 

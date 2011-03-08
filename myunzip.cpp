@@ -162,7 +162,8 @@ void MyUnzip::run()
   for (int index = 0; index < zip.size(); index++)
   {
     fill_win32_filefunc64A(&ffunc[index]);
-    QString test = QCoreApplication::applicationDirPath() + "/" + dest + "/" + zip.at(index);
+    QString test = QCoreApplication::applicationDirPath() + "/" + dest + "/" + location + "/" + zip.at(index);
+    qDebug() << test;
     const char* zipfilename = test.toStdString().c_str();
     uf[index] = unzOpen2_64(zipfilename,&ffunc[index]);
     if (uf[index]==NULL)
@@ -217,9 +218,10 @@ void MyUnzip::run()
   return;
 }
 
-void MyUnzip::setZip(QStringList s)
+void MyUnzip::setZip(QString l, QStringList s)
 {
   zip = s;
+  location = l;
 }
 
 void MyUnzip::setDest(QString s)

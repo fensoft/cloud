@@ -38,14 +38,14 @@ Cloud::Cloud(QSettings* set, QWidget *parent) :
   http = new QHttp();
   http->setHost("localhost", setGlobal->value("Global/uTorrentPort").toInt());
   http->setUser(setGlobal->value("Global/uTorrentAdminLogin").toString(), setGlobal->value("Global/uTorrentAdminPassword").toString());
-  connect(http, SIGNAL(done(bool)), this, SLOT(ut_get_file_done_timer()));
+  //connect(http, SIGNAL(done(bool)), this, SLOT(ut_get_file_done_timer()));
 
   httpStatus = new QHttp();
   httpStatus->setHost("localhost", setGlobal->value("Global/uTorrentPort").toInt());
   httpStatus->setUser(setGlobal->value("Global/uTorrentAdminLogin").toString(), setGlobal->value("Global/uTorrentAdminPassword").toString());
   connect(httpStatus, SIGNAL(done(bool)), this, SLOT(ut_status_done_timer()));
 
-  connect(&unzip2, SIGNAL(finished()), this, SLOT(refresh_log()));
+  //connect(&unzip2, SIGNAL(finished()), this, SLOT(refresh_log()));
   int reset = !QFile::exists("utorrent_configured");
   if (reset == 1)
   {
@@ -66,7 +66,16 @@ Cloud::Cloud(QSettings* set, QWidget *parent) :
   current_v = -1;
   changed = 10;
   ui->list->setColumnWidth(0, 350);
-  dl_get();
+
+  timerDl = new QTimer();
+  connect(timerDl, SIGNAL(timeout()), this, SLOT(dl_get()));
+  timerDl->start(1000);
+
+  QTimer* timerRefresh = new QTimer();
+  connect(timerRefresh, SIGNAL(timeout()), this, SLOT(refresh_log()));
+  timerRefresh->start(1000);
+
+  //dl_get();
   statusBar()->showMessage("...");
   ui->list->setItemDelegateForColumn(1, new ItemDelegate(ui->list));
   QProcess::startDetached(QCoreApplication::applicationDirPath() + "/" + setGlobal->value("Global/uTorrentExe").toString(), QStringList("/minimized"));

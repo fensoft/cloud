@@ -91,6 +91,7 @@ Cloud::Cloud(QSettings* set, QWidget *parent) :
   ui->toolBar->addAction(QIcon(":/res/eject.png"), tr("Cancel all"), this, SLOT(dl_reset()));
   ui->toolBar->addSeparator();
   ui->toolBar->addAction(QIcon(":/res/add.png"), "", this, SLOT(show_utorrent()));
+  ui->toolBar->addAction(QIcon(":/res/add-server.png"), "", this, SLOT(newIp()));
   ui->toolBar->addAction(QIcon(":/res/utorrent.png"), "", this, SLOT(show_utorrent()));
   ui->toolBar->addSeparator();
   ui->toolBar->addAction(QIcon(":/res/shutdown.png"), "", this, SLOT(appExit()));

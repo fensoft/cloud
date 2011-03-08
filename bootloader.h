@@ -22,6 +22,7 @@ public:
     int nbmac;
     QSettings* settings;
     QStringList ips;
+    QStringList processed;
 private:
     Ui::BootLoader *ui;
 signals:

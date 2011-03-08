@@ -21,41 +21,49 @@ BootLoader::~BootLoader()
 void BootLoader::processExisting()
 {
   QEventLoop loop;
-  QTimer timer;
+  //QTimer timer;
   QString cip = sender()->property("ip").toString();
 
-  if (!cip.isEmpty() && httpBuf[cip]->data().contains(settings->value("Global/MasterKeyword").toByteArray()))
+  if (!processed.contains(cip))
   {
-    ui->textBrowser->append(QString("Connected to %1").arg(cip));
-    qDebug() << "got sgt from " << cip;
-    QStringList sl = QString(httpBuf[cip]->data()).split("\r\n");
-    sl.removeAll("");
-    sl.removeAll(settings->value("Global/MasterKeyword").toString());
-    QHttp* http;
-    nbmac++;
-    ui->nbmac->setText(QVariant(nbmac).toString());
-    httpBuf[cip]->close();
-    foreach (QString cur, sl)
+    if (!cip.isEmpty() && httpBuf[cip]->data().contains(settings->value("Global/MasterKeyword").toByteArray()))
     {
-      http = new QHttp();
-      http->setHost(cip, 80);
-      QObject::connect(http, SIGNAL(done(bool)), &loop, SLOT(quit()));
-      nbfil++;
-      ui->nbfil->setText(QVariant(nbfil).toString());
-      ui->inProgress->setText(cur);
-      QFile file;
-      file.setFileName(settings->value("Global/Database").toString() + "/" + cur);
-      file.open(QIODevice::WriteOnly);
-      http->get("/" + cur, &file);
-      loop.exec();
-      timer.stop();
-      if (file.pos() == 0) //FIXME
+      ui->textBrowser->append(QString("Connected to %1").arg(cip));
+      qDebug() << "got sgt from " << cip;
+      QStringList sl = QString(httpBuf[cip]->data()).split("\r\n");
+      sl.removeAll("");
+      sl.removeAll(settings->value("Global/MasterKeyword").toString());
+      QHttp* http;
+      nbmac++;
+      ui->nbmac->setText(QVariant(nbmac).toString());
+      httpBuf[cip]->close();
+      foreach (QString cur, sl)
       {
-        qDebug() << "empty... redl...";
-        sl << cur;
+        http = new QHttp();
+        http->setHost(cip, 80);
+        QObject::connect(http, SIGNAL(done(bool)), &loop, SLOT(quit()));
+        nbfil++;
+        ui->nbfil->setText(QVariant(nbfil).toString());
+        ui->inProgress->setText(cur);
+        QFile file;
+        file.setFileName(settings->value("Global/Database").toString() + "/" + cur);
+        file.open(QIODevice::WriteOnly);
+        http->get("/" + cur, &file);
+        QTimer* timer = new QTimer();
+        timer->setSingleShot(true);
+        connect(timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+        //timer.start(settings->value("Global/AutoDelay").toInt());
+        loop.exec();
+        timer->stop();
+        if (file.pos() == 0) //FIXME
+        {
+          qDebug() << "empty... redl...";
+          sl << cur;
+        }
+        file.close();
       }
-      file.close();
     }
+    processed << cip;
   }
   ui->progressBar->setValue(1+ui->progressBar->value());
   if (ui->progressBar->value() == ips.size())
@@ -102,6 +110,11 @@ void BootLoader::process()
   }
 
   ips.removeDuplicates();
+  QStringList ips2 = ips;
+  foreach (QString ip, ips2)
+    for (int i = 1; i < settings->value("Global/MasterServersRetry").toInt(); i++)
+      ips << ip;
+
   ui->progressBar->setMaximum(ips.size());
   foreach (QString cip, ips)
   {

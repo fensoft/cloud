@@ -10,5 +10,6 @@
         <file>res/steam.ico</file>
         <file>res/stop.png</file>
         <file>res/utorrent.png</file>
+        <file>res/add-server.png</file>
     </qresource>
 </RCC>

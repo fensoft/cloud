@@ -117,6 +117,7 @@ private slots:
     void dl_stop_torrent();
     void show_utorrent();
     void appExit();
+    void newIp();
 };
 
 class ItemDelegate: public QItemDelegate

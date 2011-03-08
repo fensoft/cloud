@@ -12,14 +12,17 @@ SOURCES += main.cpp\
     cloud-tools.cpp \
     cloud-install.cpp \
     cloud-run.cpp \
-    cloud.cpp
+    cloud.cpp \
+    addserver.cpp
 
 HEADERS  += cloud.h \
             myunzip.h \
-            bootloader.h
+            bootloader.h \
+    addserver.h
 
 FORMS    += cloud.ui \
-            bootloader.ui
+            bootloader.ui \
+    addserver.ui
 
 OTHER_FILES += config.ini maets.rc
 RC_FILE      = maets.rc

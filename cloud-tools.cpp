@@ -9,6 +9,7 @@
 #include <QList>
 #include <QFile>
 #include <QtGui>
+#include "addserver.h"
 
 void Cloud::appExit()
 {
@@ -121,3 +122,14 @@ void Cloud::on_list_customContextMenuRequested(QPoint pos)
   }
 }
 
+void Cloud::newIp()
+{
+  AddServer w(setGlobal);
+  int result = w.exec();
+  if (result == QDialog::Accepted)
+  {
+    QStringList sl = setGlobal->value("Global/MasterServers").toStringList();
+    sl << w.getIp();
+    setGlobal->setValue("Global/MasterServers", sl);
+  }
+}

@@ -27,14 +27,6 @@ typedef struct
   int pos;
 } dl;
 
-/*typedef struct
-{
-  unsigned long current;
-  unsigned long max;
-  int state;
-  int pos;
-} sdl;*/
-
 typedef struct
 {
   QString name;
@@ -44,6 +36,27 @@ typedef struct
   QString location;
   QStringList files;
 } game;
+
+typedef struct
+{
+  long long down;
+  long long up;
+  int estimated;
+} stats;
+
+typedef enum
+{
+  torrent_start = 1,
+  torrent_stop = 2
+} torrent_state;
+
+typedef enum
+{
+  torrent_prio_no = 0,
+  torrent_prio_low = 1,
+  torrent_prio_normal = 2,
+  torrent_prio_high = 3
+} torrent_prio;
 
 class Cloud : public QMainWindow
 {
@@ -60,37 +73,39 @@ private:
     QSettings* setGlobal;
     //QSettings* setTmp;
     void ut_get_file();
-    static QBuffer httpBuf;
-    static QBuffer httpBufStatus;
+    //static QBuffer httpBuf;
+    //static QBuffer httpBufStatus;
     QStringList hashes;
     QMap<int, QTreeWidgetItem*> items;
-    QMap<QString, dl> dllist;
-    void dl_set_prio(int prio, QString = "localhost");
+    //QMap<QString, dl> dllist;
     QList<int> finished;
     QList<int> installed;
     QHttp* http;
     QHttp* httpStatus;
     QProcess utorrent;
     //QProcess unzip;
-    MyUnzip unzip2;
+    MyUnzip unzip;
+
     int current_v;
     int current_i;
     int current_state;
     int current_total;
     int current_num;
+
     QProcess p;
     void add_shortcuts(int item);
-    void dl_progress(int h, dl* total);
-    //QTimer ugfd;
-    int changed;
-    QTimer httptimer;
-    int first_time;
-    unsigned long long int max;
-    void dl_startstop_torrent(QString start);
+    unsigned long long int unzip_max;
     void readIni(QString ini);
     QList<game> games;
     int current_torrent;
-    QTimer* timerDl;
+    QTimer* timer_ui;
+    void torrent_startApp();
+    void torrent_showApp();
+    void torrent_setState(torrent_state i);
+    void torrent_setPrio(torrent_prio i, int gameid, QString ip = "localhost");
+    void torrent_setPrioAll(torrent_prio i, int gameid);
+    QMap<QString, dl> torrent_getInfo(QStringList hashes);
+    stats torrent_getStats();
 
 private slots:
     void on_list_itemDoubleClicked(QTreeWidgetItem* item, int column);
@@ -103,13 +118,9 @@ private slots:
     void dl_stop();
     void dl_reconfigure();
     void dl_reinstall();
-    void dl_get();
+    void ui_refresh();
     void dl_reset();
-    void ut_status_done_timer();
-    void ut_get_file_done_timer();
-    void ut_get_file_done();
-    void ut_status_done();
-    void refresh_log();
+    void ui_list_update(QMap<QString, dl> dllist);
     void refreshUnzipProgress(unsigned long long int d);
     void refreshUnzipProgressMax(unsigned long long int d);
     void refreshUnzipProgressEnd();
@@ -158,11 +169,10 @@ if (1) \
     __item__->setText(0, __string__);\
     if (__state__ != __item__->text(1)) \
     { \
+      local_changed = 1; \
       /*ui->list->resizeColumnToContents(0);*/ \
       /*ui->list->resizeColumnToContents(1);*/ \
       /*ui->list->sortItems(1, Qt::AscendingOrder);*/ \
-      changed = setGlobal->value("Global/NonSleepRefreshTime").toInt(); \
-      local_changed = 1; \
     } \
     __item__->setText(1, __state__); \
     __item__->setText(2, QVariant(__pos__).toString()); \

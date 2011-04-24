@@ -74,32 +74,6 @@ void Cloud::add_shortcuts(int item)
   TRACE(5, "");
 }
 
-void Cloud::refresh_log()
-{
-  TRACE(5, "");
-  if (!unzip2.isRunning())
-  {
-    int item = current_v;
-    if (item == -1)
-      return;
-    if (games.at(item).files.size())
-    {
-      if (games.at(item).files.size() == 0 || QFile::exists(games.at(item).files[0]))
-        unzip2.setZip("", games.at(item).files);
-      else
-        unzip2.setZip(games.at(item).location, games.at(item).files);
-      unzip2.setDest(setGlobal->value("Global/Folder").toString());
-      unzip2.setSizeBuf(setGlobal->value("Global/UnzipBufSize").toInt());
-      unzip2.start(QThread::HighPriority);
-      //ut_get_file_done();
-    }
-    else
-      refreshUnzipProgressEnd();
-    current_i = 0;
-  }
-  TRACE(5, "");
-}
-
 void Cloud::refreshUnzipProgressEnd()
 {
   TRACE(5, "");
@@ -111,7 +85,7 @@ void Cloud::refreshUnzipProgressEnd()
 void Cloud::refreshUnzipProgressMax(unsigned long long int d)
 {
   TRACE(5, "");
-  max = d;
+  unzip_max = d;
   TRACE(5, "");
 }
 
@@ -122,7 +96,7 @@ void Cloud::refreshUnzipProgress(unsigned long long int d)
   if (current_v == -1)
     return;
   int local_changed;
-  SET_ITEM(items[item], QString("%1").arg(games.at(item).name), tr("Installing... %2/%3").arg((unsigned long)(d)).arg((unsigned long)max), 55, Qt::gray);
+  SET_ITEM(items[item], QString("%1").arg(games.at(item).name), tr("Installing... %2/%3").arg((unsigned long)(d)).arg((unsigned long)unzip_max), 55, Qt::gray);
   qDebug() << d;
   TRACE(5, "");
 }

@@ -13,10 +13,7 @@
 void Cloud::on_list_itemDoubleClicked(QTreeWidgetItem* item, int column)
 {
   if (item->data(0, Qt::UserRole + 1).toInt() == 1)
-  {
-    currentItem = item->data(0, Qt::UserRole).toInt();
-    dl_set_prio(2);
-  }
+    torrent_setPrio(torrent_prio_normal, item->data(0, Qt::UserRole).toInt());
 
   if (item->data(0, Qt::UserRole + 1).toInt() == 2)
   {

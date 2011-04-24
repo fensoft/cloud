@@ -4,6 +4,11 @@
 #include <QFile>
 #include <QDir>
 #include <QTimer>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include "qjson/src/serializer.h"
+#include "qjson/src/parser.h"
 
 BootLoader::BootLoader(QSettings* set, QWidget *parent) :
     QDialog(parent),
@@ -72,6 +77,63 @@ void BootLoader::processExisting()
 
 void BootLoader::process()
 {
+//  QString xtsi;
+//  {
+//    QNetworkAccessManager manager;
+//    QNetworkRequest request(QUrl("http://localhost:9091/transmission/rpc"));
+//    request.setRawHeader("User-Agent", "User Agent");
+//    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+//    QEventLoop loop;
+//    connect(&manager, SIGNAL(finished(QNetworkReply *)), &loop, SLOT(quit()));
+//    QNetworkReply *reply = manager.post(request, "");
+//    loop.exec();
+//    if (reply->error() == QNetworkReply::UnknownContentError)
+//    {
+//      QRegExp re("X-Transmission-Session-Id: ([a-zA-Z0-9]*)");
+//      re.indexIn(reply->readAll());
+//      xtsi = re.cap(1);
+//    }
+//  }
+
+//  {
+//    QNetworkAccessManager* manager = new QNetworkAccessManager();
+//    QNetworkRequest request(QUrl("http://localhost:9091/transmission/rpc&test=1"));
+//    request.setRawHeader("User-Agent", "User Agent");
+//    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+//    request.setRawHeader("X-Transmission-Session-Id", xtsi.toAscii());
+//    QVariantMap vars;
+//    vars.insert("method", "session-get");
+//    //vars.insert("arguments", "version");
+//    QJson::Serializer serializer;
+//    QByteArray json = serializer.serialize(vars);
+//    qDebug() << json;
+
+//    QString PostVariable = json;
+//    QEventLoop loop;
+//    connect(manager, SIGNAL(finished(QNetworkReply *)), &loop, SLOT(quit()));
+//    QNetworkReply *reply = manager->post(request, PostVariable.toUtf8());
+//    loop.exec();
+//    QString jsonresult;
+//    if (reply->error() == QNetworkReply::NoError)
+//    {
+//      jsonresult = QString(reply->readAll());
+//      //qDebug() << jsonresult;
+//    }
+//    else
+//      qDebug() << "error" << reply->error() << reply->readAll() << reply->errorString();
+
+//    QJson::Parser parser;
+//    bool ok;
+//    QVariantMap result2 = parser.parse (jsonresult.toAscii(), &ok).toMap();
+//    QVariantMap result = result2["arguments"].toMap();
+//    foreach (QString v, result.keys())
+//    {
+//      qDebug() << v << "=>" << result[v];
+//    }
+
+//    loop.exec();
+//  }
+
   nbfil = nbmac = 0;
   QStringList toremove;
   if (settings->value("Global/CleanDatabase").toBool())

@@ -71,6 +71,15 @@ void Cloud::readIni(QString ini)
 void Cloud::updateContent()
 {
   TRACE(5, "");
+  QDir dir(setGlobal->value("Global/Database").toString());
+  QStringList listgames = dir.entryList(
+      QStringList("*." + setGlobal->value("Global/TorrentDescriptionExt").toString()));
+  foreach(QString game,listgames)
+  {
+    TRACE(5, "will read" << game);
+    readIni(game);
+  }
+
   ui->list->setContextMenuPolicy(Qt::CustomContextMenu);
   for (int i = 0; i < games.size(); i++)
   {

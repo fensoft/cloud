@@ -10,6 +10,7 @@ Torrent::Torrent(QSettings* setGlobal_, QList<game>* games_, QStringList* hashes
 
 void Torrent::startApp()
 {
+  TRACE(5, "");
   int first_time = 0;
 
   int reset = !QFile::exists("utorrent_configured");
@@ -28,14 +29,15 @@ void Torrent::startApp()
     first_time = 1;
   }
   QProcess::startDetached(QCoreApplication::applicationDirPath() + "/" + setGlobal->value("Global/uTorrentExe").toString(), QStringList("/minimized"));
+  TRACE(5, "");
 }
 
 void Torrent::showApp()
 {
-
+  QProcess::startDetached(setGlobal->value("Global/uTorrentExe").toString(), QStringList("/bringtofront"));
 }
 
-void Torrent::setState(torrent_state i)
+void Torrent::setState(torrent_state state)
 {
   TRACE(5, "");
   QBuffer* httpBufLocal = new QBuffer(this);
@@ -49,9 +51,14 @@ void Torrent::setState(torrent_state i)
   for (int i = 0; i != games->count(); i++)
     sl << games->at(i).hash;
   sl.removeDuplicates();
+  QString wtdo;
+  if (state==torrent_start)
+    wtdo = "start";
+  if (state==torrent_stop)
+    wtdo = "stop";
   for (int i = 0; i != sl.count(); i++)
   {
-    QString test = QString("/gui/?action=%1&hash=%2&").arg(i==torrent_start?"start":"stop").arg(sl.at(i));
+    QString test = QString("/gui/?action=%1&hash=%2&").arg(wtdo).arg(sl.at(i));
     httpget->get(test, httpBufLocal);
   }
   TRACE(5, "");

@@ -33,7 +33,7 @@ void Cloud::appExit()
 
 void Cloud::show_utorrent()
 {
-  QProcess::startDetached(setGlobal->value("Global/uTorrentExe").toString(), QStringList("/bringtofront"));
+  torrent->showApp();
 }
 
 void Cloud::readIni(QString ini)
@@ -74,6 +74,7 @@ void Cloud::updateContent()
   QDir dir(setGlobal->value("Global/Database").toString());
   QStringList listgames = dir.entryList(
       QStringList("*." + setGlobal->value("Global/TorrentDescriptionExt").toString()));
+
   foreach(QString game,listgames)
   {
     TRACE(5, "will read" << game);
@@ -98,6 +99,7 @@ void Cloud::updateContent()
       items[i] = lwitem;
     }
   }
+
   TRACE(5, "");
 }
 

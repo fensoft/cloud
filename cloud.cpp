@@ -17,7 +17,7 @@ Cloud::Cloud(QSettings* set, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Cloud)
 {
-  torrent = new Torrent(setGlobal, &games, &hashes, this);
+  torrent = new Torrent(set, &games, &hashes, this);
 
   unzip_max = 0;
   current_torrent = 0;
@@ -27,7 +27,7 @@ Cloud::Cloud(QSettings* set, QWidget *parent) :
   setGlobal = set;
 
   updateContent();
-
+  TRACE(5, "");
   torrent->startApp();
 
   ui->list->setIconSize(QSize(32, 32));
@@ -51,16 +51,16 @@ Cloud::Cloud(QSettings* set, QWidget *parent) :
 
   ui->toolBar->setFixedHeight(32);
   ui->toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-  ui->toolBar->addAction(QIcon(":/res/play.png"), "", this, SLOT(dl_start_torrent()));
-  ui->toolBar->addAction(QIcon(":/res/slow.png"), tr("Slow down"), this, SLOT(show_utorrent()));
-  ui->toolBar->addAction(QIcon(":/res/stop.png"), "", this, SLOT(dl_stop_torrent()));
-  ui->toolBar->addAction(QIcon(":/res/eject.png"), tr("Cancel all"), this, SLOT(dl_reset()));
+  ui->toolBar->addAction(QIcon(":/res/play.png"), "", this, SLOT(dl_start_torrent()))->setToolTip(tr("Start all"));
+  //ui->toolBar->addAction(QIcon(":/res/slow.png"), tr("Slow down"), this, SLOT(show_utorrent()));
+  ui->toolBar->addAction(QIcon(":/res/stop.png"), "", this, SLOT(dl_stop_torrent()))->setToolTip(tr("Pause all"));
+  ui->toolBar->addAction(QIcon(":/res/eject.png"), "", this, SLOT(dl_reset()))->setToolTip(tr("Cancel all"));
   ui->toolBar->addSeparator();
-  ui->toolBar->addAction(QIcon(":/res/add.png"), "", this, SLOT(show_utorrent()));
-  ui->toolBar->addAction(QIcon(":/res/add-server.png"), "", this, SLOT(newIp()));
-  ui->toolBar->addAction(QIcon(":/res/utorrent.png"), "", this, SLOT(show_utorrent()));
+  //ui->toolBar->addAction(QIcon(":/res/add.png"), "", this, SLOT(show_utorrent()));
+  ui->toolBar->addAction(QIcon(":/res/add-server.png"), tr("Add server"), this, SLOT(newIp()));
+  //ui->toolBar->addAction(QIcon(":/res/utorrent.png"), "", this, SLOT(show_utorrent()));
   ui->toolBar->addSeparator();
-  ui->toolBar->addAction(QIcon(":/res/shutdown.png"), "", this, SLOT(appExit()));
+  ui->toolBar->addAction(QIcon(":/res/shutdown.png"), "", this, SLOT(appExit()))->setToolTip(tr("Exit"));
 }
 
 Cloud::~Cloud()

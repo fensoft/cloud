@@ -17,9 +17,6 @@
    <iconset resource="res.qrc">
     <normaloff>:/res/cloud.png</normaloff>:/res/cloud.png</iconset>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color: rgb(57, 57, 57);</string>
-  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="margin">
@@ -131,7 +128,8 @@ color: rgb(0, 0, 0);
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="styleSheet">
-    <string notr="true">color: rgb(255, 255, 255);</string>
+    <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(57, 57, 57);</string>
    </property>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -139,7 +137,11 @@ color: rgb(0, 0, 0);
     <string>toolBar</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">color: rgb(255, 255, 255);</string>
+    <string notr="true">QToolBar, QToolButton {
+color: rgb(255, 255, 255);
+background-color: rgb(57, 57, 57);
+}
+</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>

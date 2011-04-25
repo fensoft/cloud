@@ -17,6 +17,8 @@ Cloud::Cloud(QSettings* set, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Cloud)
 {
+  torrent = new Torrent(setGlobal, &games, &hashes, this);
+
   unzip_max = 0;
   current_torrent = 0;
   ui->setupUi(this);
@@ -26,7 +28,7 @@ Cloud::Cloud(QSettings* set, QWidget *parent) :
 
   updateContent();
 
-  torrent_startApp();
+  torrent->startApp();
 
   ui->list->setIconSize(QSize(32, 32));
   current_v = -1;

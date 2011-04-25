@@ -58,6 +58,9 @@ typedef enum
   torrent_prio_high = 3
 } torrent_prio;
 
+#include "torrent.h"
+class Torrent;
+
 class Cloud : public QMainWindow
 {
     Q_OBJECT
@@ -67,6 +70,7 @@ public:
     ~Cloud();
 
 private:
+    Torrent* torrent;
     Ui::Cloud *ui;
     void updateContent();
     int currentItem;
@@ -99,13 +103,6 @@ private:
     QList<game> games;
     int current_torrent;
     QTimer* timer_ui;
-    void torrent_startApp();
-    void torrent_showApp();
-    void torrent_setState(torrent_state i);
-    void torrent_setPrio(torrent_prio i, int gameid, QString ip = "localhost");
-    void torrent_setPrioAll(torrent_prio i, int gameid);
-    QMap<QString, dl> torrent_getInfo(QStringList hashes);
-    stats torrent_getStats();
 
 private slots:
     void on_list_itemDoubleClicked(QTreeWidgetItem* item, int column);
@@ -183,6 +180,5 @@ if (1) \
     qDebug() << "not found"; \
 } \
 else
-
 
 #endif // MAINWINDOW_H

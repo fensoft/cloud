@@ -14,12 +14,14 @@ SOURCES += main.cpp\
     cloud-run.cpp \
     cloud.cpp \
     addserver.cpp \
-    cloud-torrent.cpp
+    cloud-torrent.cpp \
+    torrent.cpp
 
 HEADERS  += cloud.h \
             myunzip.h \
             bootloader.h \
-    addserver.h
+    addserver.h \
+    torrent.h
 
 HEADERS += qjson/src/json_parser.hh \
   qjson/src/json_scanner.h \

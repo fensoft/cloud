@@ -13,47 +13,47 @@
 void Cloud::dl_reset()
 {
   for (int i = 1; i != games.count(); i++)
-    torrent_setPrio(torrent_prio_no, i);
+    torrent->setPrio(torrent_prio_no, i);
 }
 
 void Cloud::dl_start_low_all()
 {
-  torrent_setPrioAll(torrent_prio_low, currentItem);
+  torrent->setPrioAll(torrent_prio_low, currentItem);
 }
 
 void Cloud::dl_start_all()
 {
-  torrent_setPrioAll(torrent_prio_normal, currentItem);
+  torrent->setPrioAll(torrent_prio_normal, currentItem);
 }
 
 void Cloud::dl_stop_all()
 {
-  torrent_setPrioAll(torrent_prio_no, currentItem);
+  torrent->setPrioAll(torrent_prio_no, currentItem);
 }
 
 void Cloud::dl_start_low()
 {
-  torrent_setPrio(torrent_prio_low, currentItem);
+  torrent->setPrio(torrent_prio_low, currentItem);
 }
 
 void Cloud::dl_start()
 {
-  torrent_setPrio(torrent_prio_normal, currentItem);
+  torrent->setPrio(torrent_prio_normal, currentItem);
 }
 
 void Cloud::dl_stop()
 {
-  torrent_setPrio(torrent_prio_no, currentItem);
+  torrent->setPrio(torrent_prio_no, currentItem);
 }
 
 void Cloud::dl_start_torrent()
 {
-  torrent_setState(torrent_start);
+  torrent->setState(torrent_start);
 }
 
 void Cloud::dl_stop_torrent()
 {
-  torrent_setState(torrent_stop);
+  torrent->setState(torrent_stop);
 }
 
 void Cloud::ui_refresh()
@@ -63,9 +63,9 @@ void Cloud::ui_refresh()
     return;
 
 
-  ui_list_update(torrent_getInfo(hashes));
+  ui_list_update(torrent->getInfo(hashes));
 
-  stats st = torrent_getStats();
+  stats st = torrent->getStats();
   if (st.estimated != -1)
     statusBar()->showMessage(tr("Up %1,%2 Mb/s\tDl %3,%4 Mb/s\tTime : %5 min").arg(st.down/10).arg(st.down%10).arg(st.up/10).arg(st.up%10).arg(st.estimated));
   else

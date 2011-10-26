@@ -11,6 +11,7 @@
 #include <QDir>
 #include <QApplication>
 #include <QCoreApplication>
+#include <QVariant>
 
 int do_extract_currentfile(unzFile uf,
                            const int* popt_extract_without_path,
@@ -157,6 +158,7 @@ void MyUnzip::run()
 
   unzFile uf[128];
   unz_global_info64 gi[128];
+  unsigned long long int sz[128];
 
   zlib_filefunc64_def ffunc[128];
   for (int index = 0; index < zip.size(); index++)
@@ -164,6 +166,9 @@ void MyUnzip::run()
     fill_win32_filefunc64A(&ffunc[index]);
     QString test = QCoreApplication::applicationDirPath() + "/" + dest + "/" + location + "/" + zip.at(index);
     qDebug() << test;
+    QFileInfo qfi(test);
+    sz[index] = qfi.size();
+    qDebug() << qfi.size();
     const char* zipfilename = test.toStdString().c_str();
     uf[index] = unzOpen2_64(zipfilename,&ffunc[index]);
     if (uf[index]==NULL)
@@ -179,12 +184,15 @@ void MyUnzip::run()
   }
   //
   for (int index = 0; index < zip.size(); index++){
-    global_max += gi[index].number_entry;
+    //global_max += gi[index].number_entry;
+    global_max += sz[index];
     qDebug() << gi[index].number_entry;
   }
-  emit max((double)global_max);
+  emit max((double)(global_max/1048576ll));
+
   for (int index = 0; index < zip.size(); index++)
   {
+    unsigned long long int begin = unzGetOffset64(uf[index]);
     qDebug() << "void MyUnzip::run() - 2";
     for (uLong i=0;i<gi[index].number_entry;i++)
     {
@@ -192,8 +200,10 @@ void MyUnzip::run()
       int opt_extract_without_path = 0;
       int opt_overwrite = 1;
       char* password = 0;
-      global_current++;
-      emit newState((double)global_current);
+      global_current=unzGetOffset64(uf[index]) - begin;
+      //qDebug() << global_current;
+      qDebug() << QVariant((quint64)global_current/1048576ll);
+      emit newState((double)(global_current / 1048576ll));
       if (do_extract_currentfile(uf[index],&opt_extract_without_path,
                                  &opt_overwrite,
                                  password,

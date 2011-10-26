@@ -51,7 +51,7 @@
 #endif
 
 #ifndef Z_BUFSIZE
-#define Z_BUFSIZE (64*1024) //(16384)
+#define Z_BUFSIZE (1024*1024) //(16384)
 #endif
 
 #ifndef Z_MAXFILENAMEINZIP

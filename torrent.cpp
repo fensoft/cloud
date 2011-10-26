@@ -160,7 +160,7 @@ stats Torrent::getStats()
   httpBufStatus.open(QIODevice::ReadWrite | QIODevice::Truncate);
 
   QHttp httpStatus;
-  httpStatus.setHost("localhost", setGlobal->value("Global/uTorrentPort").toInt());
+  httpStatus.setHost("127.0.0.1", setGlobal->value("Global/uTorrentPort").toInt());
   httpStatus.setUser(setGlobal->value("Global/uTorrentAdminLogin").toString(), setGlobal->value("Global/uTorrentAdminPassword").toString());
 
   httpStatus.get(QString("/gui/?list=1"), &httpBufStatus);

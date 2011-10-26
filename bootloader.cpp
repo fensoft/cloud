@@ -7,8 +7,11 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QHostInfo>
 #include "qjson/src/serializer.h"
 #include "qjson/src/parser.h"
+#include <QHostAddress>
+#include <QNetworkInterface>
 
 BootLoader::BootLoader(QSettings* set, QWidget *parent) :
     QDialog(parent),
@@ -134,6 +137,15 @@ void BootLoader::process()
 //    loop.exec();
 //  }
 
+  QString uTorrentIPs = settings->value("Global/uTorrentIPs").toString();
+  if (uTorrentIPs == "auto")
+    foreach(QNetworkInterface interface, QNetworkInterface::allInterfaces())
+      if (interface.flags().testFlag(QNetworkInterface::IsRunning))
+        foreach (QNetworkAddressEntry entry, interface.addressEntries())
+          if (interface.hardwareAddress() != "00:00:00:00:00:00" && entry.ip().toString().contains("."))
+            if (entry.ip().toString().contains("192.168") || entry.ip().toString().contains("10."))
+              uTorrentIPs = QString(entry.ip().toString()).replace(QRegExp("[.][^.]*$"), ".%1");
+
   nbfil = nbmac = 0;
   QStringList toremove;
   if (settings->value("Global/CleanDatabase").toBool())
@@ -162,20 +174,23 @@ void BootLoader::process()
 
   ui->progressBar->setValue(0);
 
-  ips << settings->value("Global/MasterServers").toStringList();
+  //ips << settings->value("Global/MasterServers").toStringList();
   if (settings->value("Global/AutoMasterServers").toBool())
   {
     for (int ip = 1; ip < 255; ip++)
     {
-      ips << settings->value("Global/uTorrentIPs").toString().arg(ip);
+      ips << uTorrentIPs.arg(ip);
     }
   }
 
   ips.removeDuplicates();
-  QStringList ips2 = ips;
+  QStringList ips2 = settings->value("Global/MasterServers").toStringList();
   foreach (QString ip, ips2)
     for (int i = 1; i < settings->value("Global/MasterServersRetry").toInt(); i++)
-      ips << ip;
+       foreach (QHostAddress qha, QHostInfo::fromName(ip).addresses())
+         if (qha.toString().contains("."))
+           ips << qha.toString();
+  ips.removeDuplicates();
 
   ui->progressBar->setMaximum(ips.size());
   foreach (QString cip, ips)

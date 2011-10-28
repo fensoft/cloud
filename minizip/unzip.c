@@ -101,7 +101,7 @@
 
 
 #ifndef UNZ_BUFSIZE
-#define UNZ_BUFSIZE (16384)
+#define UNZ_BUFSIZE (65536)
 #endif
 
 #ifndef UNZ_MAXFILENAMEINZIP
@@ -2073,6 +2073,23 @@ extern int ZEXPORT unzGetGlobalComment (unzFile file, char * szComment, uLong uS
     if ((szComment != NULL) && (uSizeBuf > s->gi.size_comment))
         *(szComment+s->gi.size_comment)='\0';
     return (int)uReadThis;
+}
+
+extern ZPOS64_T ZEXPORT unzGetLeft(unzFile file)
+{
+    unz64_s* s;
+
+    if (file==NULL)
+          return 0; //UNZ_PARAMERROR;
+    s=(unz64_s*)file;
+    if (!s->current_file_ok)
+      return 0;
+    if (s->gi.number_entry != 0 && s->gi.number_entry != 0xffff)
+      if (s->num_file==s->gi.number_entry)
+         return 0;
+    //if (s->pfile_in_zip_read == 0)
+    //    return 0;
+    return s->cur_file_info.compressed_size;
 }
 
 /* Additions by RX '2004 */

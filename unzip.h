@@ -207,6 +207,9 @@ extern int ZEXPORT unzGetGlobalInfo OF((unzFile file,
 
 extern int ZEXPORT unzGetGlobalInfo64 OF((unzFile file,
                                         unz_global_info64 *pglobal_info));
+
+extern ZPOS64_T ZEXPORT unzGetLeft(unzFile file);
+
 /*
   Write info about the ZipFile in the *pglobal_info structure.
   No preparation of the structure is needed

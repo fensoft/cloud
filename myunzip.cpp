@@ -12,6 +12,9 @@
 #include <QApplication>
 #include <QCoreApplication>
 #include <QVariant>
+#include <QMessageBox>
+#include <QIcon>
+#include <QDateTime>
 
 int do_extract_currentfile(unzFile uf,
                            const int* popt_extract_without_path,
@@ -151,8 +154,12 @@ int do_extract_currentfile(unzFile uf,
 
 void MyUnzip::run()
 {
-  unsigned long long int global_max = 0;
-  unsigned long long int global_current = 0;
+  unsigned long long int global_maxsz = 0;
+  unsigned long long int global_maxnb = 0;
+  unsigned long long int global_currentsz = 0;
+  unsigned long long int global_currentnb = 0;
+
+  QDateTime begin = QDateTime::currentDateTime();
 
   qDebug() << "void MyUnzip::run() - 1" << zip;
 
@@ -184,15 +191,15 @@ void MyUnzip::run()
   }
   //
   for (int index = 0; index < zip.size(); index++){
-    //global_max += gi[index].number_entry;
-    global_max += sz[index];
+    global_maxnb += gi[index].number_entry;
+    global_maxsz += sz[index];
     qDebug() << gi[index].number_entry;
   }
-  emit max((double)(global_max/1048576ll));
+  emit max((double)(global_maxsz/1048576ll)+global_maxnb/50);
 
   for (int index = 0; index < zip.size(); index++)
   {
-    unsigned long long int begin = unzGetOffset64(uf[index]);
+    //unsigned long long int begin = unzGetLeft(uf[index]);
     qDebug() << "void MyUnzip::run() - 2";
     for (uLong i=0;i<gi[index].number_entry;i++)
     {
@@ -200,10 +207,13 @@ void MyUnzip::run()
       int opt_extract_without_path = 0;
       int opt_overwrite = 1;
       char* password = 0;
-      global_current=unzGetOffset64(uf[index]) - begin;
+      //((unz64_s*)uf[index])->
+      global_currentsz+=unzGetLeft(uf[index]);
+      global_currentnb++;
       //qDebug() << global_current;
-      qDebug() << QVariant((quint64)global_current/1048576ll);
-      emit newState((double)(global_current / 1048576ll));
+      //qDebug() << QVariant(global_currentsz);
+      //qDebug() << QVariant((quint64)global_currentnb);
+      emit newState((double)(global_currentsz / 1048576ll)+global_currentnb/50);
       if (do_extract_currentfile(uf[index],&opt_extract_without_path,
                                  &opt_overwrite,
                                  password,
@@ -225,6 +235,11 @@ void MyUnzip::run()
     unzClose(uf[index]);
   }
   emit(end());
+
+  qDebug() << "end!!!";
+  qDebug() << begin.secsTo(QDateTime::currentDateTime());
+  //QMessageBox::critical(0, "", "toto");
+
   return;
 }
 

@@ -24,6 +24,7 @@ Cloud::Cloud(QSettings* set, QWidget *parent) :
   ui->setupUi(this);
   ui->list->clear();
   ui->list->hideColumn(2);
+  //ui->webView->setUrl(QUrl("http://www.jeuxvideo.fr/jeux/battlefield-3/preview-test-battlefield-3.html"));
   setGlobal = set;
 
   updateContent();
@@ -66,4 +67,14 @@ Cloud::Cloud(QSettings* set, QWidget *parent) :
 Cloud::~Cloud()
 {
   delete ui;
+}
+
+void Cloud::on_list_itemClicked(QTreeWidgetItem *item, int column)
+{
+    QString url = games[item->data(0, Qt::UserRole).toInt()].url;
+    qDebug() << url;
+    if (url != "")
+      ui->webView->setUrl(QUrl(url));
+    else
+      ui->webView->setUrl(QUrl("about:blank"));
 }

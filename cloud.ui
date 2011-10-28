@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>474</width>
-    <height>432</height>
+    <width>1000</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,14 +18,36 @@
     <normaloff>:/res/cloud.png</normaloff>:/res/cloud.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QGridLayout" name="gridLayout">
     <property name="margin">
      <number>0</number>
     </property>
-    <item>
-     <widget class="QTreeWidget" name="list">
-      <property name="styleSheet">
-       <string notr="true">QTreeWidget {
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QSplitter" name="splitter">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QTreeWidget" name="list">
+       <property name="minimumSize">
+        <size>
+         <width>400</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTreeWidget {
 background-color: rgb(0, 0, 0);
 color: rgb(255, 255, 255);
 }
@@ -67,61 +89,72 @@ color: rgb(0, 0, 0);
 	selection-color: rgb(0, 0, 0);
 	selection-background-color: rgb(0, 0, 0);
  }</string>
-      </property>
-      <property name="rootIsDecorated">
-       <bool>false</bool>
-      </property>
-      <attribute name="headerVisible">
-       <bool>false</bool>
-      </attribute>
-      <column>
-       <property name="text">
-        <string notr="true">1</string>
        </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>status</string>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
        </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>pos</string>
+       <property name="rootIsDecorated">
+        <bool>false</bool>
        </property>
-      </column>
-      <item>
-       <property name="text">
-        <string>a</string>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>status</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>pos</string>
+        </property>
+       </column>
+       <item>
+        <property name="text">
+         <string>a</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>b</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>c</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </item>
+      </widget>
+      <widget class="QWebView" name="webView">
+       <property name="url">
+        <url>
+         <string>about:blank</string>
+        </url>
        </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>b</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>c</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </item>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -152,6 +185,13 @@ background-color: rgb(57, 57, 57);
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header>QtWebKit/QWebView</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="res.qrc"/>
  </resources>

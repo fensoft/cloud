@@ -34,6 +34,7 @@ typedef struct
   QString icon;
   QString hash;
   QString location;
+  QString url;
   QStringList files;
 } game;
 
@@ -126,6 +127,7 @@ private slots:
     void show_utorrent();
     void appExit();
     void newIp();
+    void on_list_itemClicked(QTreeWidgetItem *item, int column);
 };
 
 class ItemDelegate: public QItemDelegate

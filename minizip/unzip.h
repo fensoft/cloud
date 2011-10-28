@@ -207,6 +207,9 @@ extern int ZEXPORT unzGetGlobalInfo OF((unzFile file,
 
 extern int ZEXPORT unzGetGlobalInfo64 OF((unzFile file,
                                         unz_global_info64 *pglobal_info));
+
+extern ZPOS64_T ZEXPORT unzGetLeft(unzFile file);
+
 /*
   Write info about the ZipFile in the *pglobal_info structure.
   No preparation of the structure is needed
@@ -322,7 +325,6 @@ extern ZPOS64_T ZEXPORT unzGetCurrentFileZStreamPos64 OF((unzFile file));
 
 /** Addition for GDAL : END */
 
-
 /***************************************************************************/
 /* for reading the content of the current zipfile, you can open it, read data
    from it, and close it (you can close it before reading all the file)
@@ -427,8 +429,6 @@ extern uLong ZEXPORT unzGetOffset (unzFile file);
 /* Set the current file offset */
 extern int ZEXPORT unzSetOffset64 (unzFile file, ZPOS64_T pos);
 extern int ZEXPORT unzSetOffset (unzFile file, uLong pos);
-
-
 
 #ifdef __cplusplus
 }

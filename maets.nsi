@@ -125,11 +125,13 @@ Section "" ;No components page, name is not important
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   File Cloud.exe
-  File P:\Dev\QtSDK\mingw\bin\libgcc_s_dw2-1.dll
-  File P:\Dev\QtSDK\mingw\bin\mingwm10.dll
-  File P:\Dev\QtSDK\Desktop\Qt\4.7.2\mingw\lib\QtCore4.dll
-  File P:\Dev\QtSDK\Desktop\Qt\4.7.2\mingw\lib\QtGui4.dll
-  File P:\Dev\QtSDK\Desktop\Qt\4.7.2\mingw\lib\QtNetwork4.dll
+  File O:\Dev\QtSDK\mingw\bin\libgcc_s_dw2-1.dll
+  File O:\Dev\QtSDK\mingw\bin\mingwm10.dll
+  File O:\Dev\QtSDK\Desktop\Qt\4.7.4\mingw\lib\QtCore4.dll
+  File O:\Dev\QtSDK\Desktop\Qt\4.7.4\mingw\lib\QtGui4.dll
+  File O:\Dev\QtSDK\Desktop\Qt\4.7.4\mingw\lib\QtNetwork4.dll
+  File O:\Dev\QtSDK\Desktop\Qt\4.7.4\mingw\lib\QtWebKit4.dll
+  File O:\Dev\QtSDK\Desktop\Qt\4.7.4\mingw\lib\phonon4.dll
   File zlib1.dll
   File config.ini
   SetOutPath $INSTDIR\tools
@@ -145,7 +147,7 @@ Section "" ;No components page, name is not important
   SetOutPath $INSTDIR
   CreateShortCut "$DESKTOP\Cloud.lnk" "$INSTDIR\Cloud.exe"
   SetRegView 64
-  WriteRegStr HKCU "Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" "$INSTDIR\Steam-LAN.exe" "RUNASADMIN"
+  WriteRegStr HKCU "Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" "$INSTDIR\Cloud.exe" "RUNASADMIN"
   Delete $INSTDIR\utorrent_configured
   
 SectionEnd ; end the section

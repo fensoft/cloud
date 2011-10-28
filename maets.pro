@@ -1,8 +1,8 @@
-QT       += core gui xml network
+QT       += core gui xml network webkit
 TARGET   = ../Cloud
 TEMPLATE = app
 SOURCES += main.cpp\
-           minizip/zip.c \
+           #minizip/zip.c \
            minizip/unzip.c \
            minizip/iowin32.c \
            minizip/ioapi.c \

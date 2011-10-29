@@ -48,7 +48,7 @@ void BootLoader::processExisting()
       foreach (QString cur, sl)
       {
         http = new QHttp();
-        http->setHost(cip, 80);
+        http->setHost(cip, settings->value("Global/Webserverport").toInt());
         QObject::connect(http, SIGNAL(done(bool)), &loop, SLOT(quit()));
         nbfil++;
         ui->nbfil->setText(QVariant(nbfil).toString());
@@ -150,7 +150,7 @@ void BootLoader::process()
   QStringList toremove;
   if (settings->value("Global/CleanDatabase").toBool())
   {
-    qDebug() << QCoreApplication::applicationFilePath()+ "/" + settings->value("Global/Database").toString();
+    qDebug() << QCoreApplication::applicationDirPath()+ "/" + settings->value("Global/Database").toString();
     QStringList fl = QDir(QCoreApplication::applicationDirPath()+ "/" + settings->value("Global/Database").toString()).entryList();
     foreach(QString f, fl)
     {
@@ -197,7 +197,7 @@ void BootLoader::process()
   {
     QHttp* http = new QHttp();
     http->setProperty("ip", cip);
-    http->setHost(cip, 80);
+    http->setHost(cip, settings->value("Global/Webserverport").toInt());
     httpBuf[cip] = new QBuffer();
     QTimer* timer = new QTimer();
     http->get("/" + settings->value("Global/Distfile").toString(), httpBuf[cip]);

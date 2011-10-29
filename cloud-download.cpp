@@ -12,7 +12,7 @@
 
 void Cloud::dl_reset()
 {
-  for (int i = 1; i != games.count(); i++)
+  for (int i = 0; i != games.count(); i++)
     torrent->setPrio(torrent_prio_no, i);
 }
 

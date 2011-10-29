@@ -1,4 +1,7 @@
 #include "torrent.h"
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
 Torrent::Torrent(QSettings* setGlobal_, QList<game>* games_, QStringList* hashes_, QObject *parent) :
     QObject(parent)
@@ -99,26 +102,77 @@ void Torrent::setPrioAll(torrent_prio prio, int gameid)
 
 QMap<QString, dl> Torrent::getInfo(QStringList hashes)
 {
-  TRACE(10, "");
+  //TRACE(10, "");
   QMap<QString, dl> result;
-  static QBuffer httpBuf;
+  /*static */QBuffer httpBuf;
   foreach (QString hash, hashes)
   {
-    httpBuf.open(QIODevice::ReadWrite | QIODevice::Truncate);
+    QNetworkAccessManager manager;
+    QEventLoop loop;
+    connect(&manager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+    //qDebug() << "...";
+    QString surl = QString("http://%3@localhost:%1%2").arg(setGlobal->value("Global/uTorrentPort").toInt())
+        .arg(QString("/gui/?action=getfiles&hash=%1").arg(hash))
+        .arg(QString("admin:admin"));
+    //qDebug() << surl;
+    QUrl url = QUrl(surl);
+    //QUrl("http://admin:admin@localhost:1337/gui/?action=getfiles&hash=3023DD766169B49F402F248F66B783BD90E6AECB");
+    QNetworkRequest request = QNetworkRequest(url);
+    QNetworkReply* reply = manager.get(request);
+    loop.exec();
+
+    int i = 0;
+    while (reply->bytesAvailable())
+    {
+      QString line = reply->readLine();
+      //qDebug() << line;
+      line.replace(QRegExp("^,*"), "");
+      QStringList sl = QString(line).split(',');
+      if (sl.size() == 4)
+      {
+        //TRACE(5, "");
+        //TRACE(10, "");
+        sl[0].replace("[\"", "").replace("[", "").replace("\"", "");
+        sl[3].replace("]", "");
+        dl c;
+        c.current = c.max = 0L;
+        c.current = QVariant(sl[2]).toLongLong();
+        c.max = QVariant(sl[1]).toLongLong();
+        c.state = QString(sl[3]).toInt();
+        c.pos = i;
+        i++;
+        if (i > 512)
+        {
+          qDebug() << "error";
+        }
+        sl[0].replace("\\\\", "/");
+        result.insert(sl[0], c);
+      }
+      /*else
+        qDebug() << "skip";*/
+    }
+    //qDebug() << result.size();
+    /*httpBuf.open(QIODevice::ReadWrite | QIODevice::Truncate);
     QHttp http;
-    http.setHost("localhost", setGlobal->value("Global/uTorrentPort").toInt());
-    http.setUser(setGlobal->value("Global/uTorrentAdminLogin").toString(), setGlobal->value("Global/uTorrentAdminPassword").toString());
+    http.setHost("localhost", );
+    http.setUser();
     http.get(QString("/gui/?action=getfiles&hash=%1").arg(hash), &httpBuf);
     QEventLoop loop;
     connect(&http, SIGNAL(done(bool)), &loop, SLOT(quit()));
     loop.exec();
     httpBuf.seek(0);
+    QByteArray res = httpBuf.readAll();
+    qDebug() << http.errorString();
+    qDebug() << res;
+    qDebug() << httpBuf.size();
+    return result;
     int i = 0;
     while (!httpBuf.atEnd())
     {
-      char buf[1025];
+      char buf[32768];
       //qDebug() <<
-      httpBuf.readLine(buf, 1024);
+      httpBuf.readLine(buf, 32767);
+      buf[32767] = 0;
       QString bufS(buf);
       if (bufS.size() && (bufS[0] == '[' || bufS[1] == '['))
       {
@@ -145,9 +199,9 @@ QMap<QString, dl> Torrent::getInfo(QStringList hashes)
         }
       }
     }
-    //qDebug() << result.keys();
+    //qDebug() << result.keys();*/
   }
-  TRACE(10, "");
+  //TRACE(10, "");
   return result;
 }
 
@@ -169,7 +223,7 @@ stats Torrent::getStats()
   connect(&httpStatus, SIGNAL(done(bool)), &loop, SLOT(quit()));
   loop.exec();
   //connect(httpStatus, SIGNAL(done(bool)), this, SLOT(ut_status_done_timer()));
-  TRACE(10, "");
+  //TRACE(10, "");
   httpBufStatus.seek(0);
   while (!httpBufStatus.atEnd())
   {

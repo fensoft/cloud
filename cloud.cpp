@@ -72,9 +72,9 @@ Cloud::~Cloud()
 void Cloud::on_list_itemClicked(QTreeWidgetItem *item, int column)
 {
     QString url = games[item->data(0, Qt::UserRole).toInt()].url;
-    qDebug() << url;
-    if (url != "")
+    qDebug() << url << "-" << ui->webView->url();
+    if (url == "")
+      url = "about:blank";
+    if (ui->webView->url() != url)
       ui->webView->setUrl(QUrl(url));
-    else
-      ui->webView->setUrl(QUrl("about:blank"));
 }

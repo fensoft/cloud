@@ -7,6 +7,7 @@
 #include <qdebug.h>
 #include <QSettings>
 #include <QDir>
+#include "torrent.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,11 +17,13 @@ int main(int argc, char *argv[])
   QDir(".").mkdir(settings->value("Global/Database").toString());
   QDir(".").mkdir(settings->value("Global/WebserverRoot").toString());
 
-  qDebug() << "test" << settings->value("Global/Webserverarg").toString().arg(QCoreApplication::applicationDirPath().replace("/", "\\"));
 
   QProcess* p = new QProcess();
+  QStringList args;
+  args << settings->value("Global/Webserverarg").toString().arg(QCoreApplication::applicationDirPath().replace("/", "\\"));
+  args << settings->value("Global/Webserverport").toString();
   p->start(QCoreApplication::applicationDirPath() + "/" + settings->value("Global/Webserver").toString(),
-           QStringList(settings->value("Global/Webserverarg").toString().arg(QCoreApplication::applicationDirPath().replace("/", "\\"))));
+           args);
 
   BootLoader b(settings);
   b.show();
@@ -29,6 +32,9 @@ int main(int argc, char *argv[])
 
   Cloud w(settings);
   w.show();
+
+//  Torrent t(settings, 0, 0);
+//  t.getInfo(QStringList("3023DD766169B49F402F248F66B783BD90E6AECB"));
 
   return a.exec();
 }
